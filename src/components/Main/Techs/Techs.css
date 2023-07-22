@@ -1,0 +1,151 @@
+.techs {
+  box-sizing: border-box;
+  padding: 100px 70px;
+  background-color: #272727;
+}
+
+.techs__wrapper {
+  min-height: 415px;
+  display: flex;
+  flex-direction: column;
+}
+
+.techs__main-title {
+  margin: 0;
+  padding: 0;
+  padding-bottom: 23px;
+  font-weight: 400;
+  font-style: normal;
+  color: #FFF;
+  font-size: 22px;
+  line-height: 27px;
+  letter-spacing: -0.88px;
+  border-bottom: 1px solid #dadada;
+}
+
+.techs__title {
+  margin: 90px auto 26px;
+  padding: 0;
+  font-style: normal;
+  font-weight: 400;
+  color: #FFF;
+  text-align: center;
+  font-size: 50px;
+  line-height: 58px;
+  letter-spacing: -2px;
+  max-width: 730px;
+}
+
+.techs__description {
+  margin: 0 auto;
+  padding: 0;
+  max-width: 460px;
+  color: #FFF;
+  text-align: center;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.56px;
+}
+
+.techs__list {
+  margin: 0;
+  padding: 100px 0 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 90px);
+  gap: 10px;
+  justify-content: center;
+  list-style: none;
+}
+
+.techs__list-item {
+  margin: 0;
+  padding: 0;
+  width: 90px;
+  height: 60px;
+  border-radius: 10px;
+  color: #FFF;
+  background-color: #303030;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.techs__list-item:hover {
+  transform: translate(0, -5px) scale(1);
+  transition-duration: 0.5s;
+}
+
+@media screen and (max-width: 1023px) {
+  .techs {
+    padding: 90px 50px;
+  }
+
+  .techs__wrapper {
+    min-height: 387px;
+  }
+
+  .techs__title {
+    margin: 80px auto 22px;
+    max-width: 600px;
+  }
+
+  .techs__description {
+    padding-bottom: 83px;
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .techs__list {
+    grid-template-columns: repeat(auto-fit, 84px);
+  }
+
+  .techs__list-item {
+    margin: 0 auto;
+    width: 84px;
+    height: 57px;
+    font-size: 12px;
+    line-height: 15px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .techs {
+    padding: 70px 18px;
+  }
+
+  .techs__wrapper {
+    min-height: 511px;
+  }
+
+  .techs__list {
+    grid-template-columns: repeat(2, 84px);
+  }
+
+  .techs__main-title {
+    padding-bottom: 28px;
+    font-size: 18px;
+    line-height: 22px;
+  }
+
+  .techs__title {
+    margin: 0 auto;
+    padding: 0;
+    margin-top: 60px;
+    margin-bottom: 24px;
+    font-size: 30px;
+    line-height: 36px;
+    max-width: 292px;
+  }
+
+  .techs__description {
+    margin: 0 auto;
+    padding: 0;
+    padding-bottom: 50px;
+    max-width: 292px;
+    font-size: 11px;
+    line-height: 16px;
+  }
+}
