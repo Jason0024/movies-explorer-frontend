@@ -6,6 +6,23 @@
   background-color: #073042;
 }
 
+.header.main {
+  background-color: #073042;
+}
+
+.header.other {
+  background-color: #202020;
+}
+
+.header__account-button {
+  min-width: 100px;
+  min-height: 32px;
+  background-image: url(../../images/acc-button.svg);
+  background-position: center center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
 .header__button-container {
   margin-left: auto;
   display: flex;
@@ -18,7 +35,7 @@
   gap: 16px;
   margin-left: 44px;
   width: 100%;
-  justify-content: flex-end;
+  justify-content: center;
   margin-right: 50px;
 }
 
@@ -36,12 +53,8 @@
   text-align: right;
 }
 
-.header__button-green {
-  background-color: #3DDC84;
-}
-
 .header__button_active {
-  color: #2be080;
+  border-bottom: 2px solid #fff;
 }
 
 .header__button:hover {
@@ -59,7 +72,6 @@
 
 .header__account-button {
   width: 100px;
-  height: 32px;
 }
 
 .header__account-button:hover {
@@ -72,7 +84,7 @@
   width: 44px;
   height: 44px;
   display: none;
-  background-color: #202020;
+  background-color: #20202000;
 }
 
 .header__menu-button:hover {
@@ -113,7 +125,7 @@
     line-height: 16px;
   }
 
-  .header__button-green {
+  .header__button-black {
     min-width: 54px;
   }
 }

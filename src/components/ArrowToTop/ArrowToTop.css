@@ -1,0 +1,26 @@
+.scroll {
+  position: fixed;
+  right: calc(50% - 25px);
+  bottom: 3%;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  z-index: 9999;
+  cursor: pointer;
+}
+
+.scroll__image {
+  width: 25px;
+}
+
+.scroll.visible {
+  opacity: 1;
+}
+
+@media screen and (max-width: 576px) {
+  .scroll {
+    position: fixed;
+    right: calc(50% - 15px);
+    bottom: 3%;
+    opacity: 0;
+  }
+}

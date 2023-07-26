@@ -1,25 +1,67 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, NavLink } from 'react-router-dom';
 import './Header.css';
-import logoImg from '../../images/logo.svg';
+import Navigation from './Navigation/Navigation';
+import logoIco from '../../images/logo.svg';
+import menuIco from '../../images/menu-button.svg';
 
 
-function Header() {
+function Header({ loggedIn, colorClass }) {
+  const [isClicked, setIsClicked] = useState(false);
+
+  function handleMenuOpen() {
+    setIsClicked(true);
+  }
+
+  function handleMenuClose() {
+    setIsClicked(false);
+  }
+
   return (
     <>
-      <header className="header" id="header">
-        <Link to="/" className="form__logo">
-          <img src={logoImg} alt="Логотип проекта" />
-        </Link>
-        <div className="header__button-container">
-          <Link to="/signup" className="header__button">
-            Регистрация
+      {!loggedIn ? (
+        <header className={`header ${colorClass}`} id='header'>
+          <Link to='/' className='form__logo'>
+            <img src={logoIco} alt='Иконка логотипа' />
           </Link>
-          <Link to="/signin" className="header__button header__button-green">
-            Войти
+          <div className='header__button-container'>
+            <Link to='/signup' className='header__button'>
+              Регистрация
+            </Link>
+            <Link to='/signin' className='header__button header__button-green'>
+              Войти
+            </Link>
+          </div>
+        </header>
+      ) : (
+        <header className={`header ${colorClass}`} id='header'>
+          <Link to='/' className='form__logo'>
+            <img src={logoIco} alt='логотип' />
           </Link>
-        </div>
-      </header>
+          <div className='header__button-container_films'>
+            <NavLink
+              to='/movies'
+              className='header__button'
+              activeClassName='header__button_active'>
+              Фильмы
+            </NavLink>
+            <NavLink
+              to='/saved-movies'
+              className='header__button'
+              activeClassName='header__button_active'>
+              Сохранённые фильмы
+            </NavLink>
+          </div>
+          <div className='header__button-container'>
+            <Link to='/profile' className='header__account-button'>
+            </Link>
+            <button onClick={handleMenuOpen} className='header__menu-button'>
+              <img src={menuIco} alt='меню' />
+            </button>
+          </div>
+          {isClicked ? <Navigation handleMenuClose={handleMenuClose} /> : ''}
+        </header>
+      )}
     </>
   );
 }
