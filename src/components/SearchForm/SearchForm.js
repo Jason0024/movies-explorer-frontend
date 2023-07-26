@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './SearchForm.css';
 import Checkbox from '../Checkbox/Checkbox';
 import { useLocation } from 'react-router-dom';
@@ -7,27 +7,36 @@ function SearchForm({ onSearchMovies, onFilter, isShortMovies }) {
   const [isQueryError, setIsQueryError] = useState(false);
   const [query, setQuery] = useState('');
   const location = useLocation();
+  const searchInputRef = useRef(null); // Создаем ref для поля ввода
 
+  // Обработчик изменения значения в поле ввода
   function handleChangeQuery(e) {
     setQuery(e.target.value);
+    setIsQueryError(false); // Сбрасываем ошибку при изменении значения
   }
 
+  // Обработчик отправки формы поиска
   function handleSubmit(e) {
     e.preventDefault();
     if (query.trim().length === 0) {
-      setIsQueryError(true);
+      setIsQueryError(true); // Проверяем наличие запроса перед поиском
     } else {
-      setIsQueryError(false);
-      onSearchMovies(query);
+      onSearchMovies(query); // Вызываем функцию поиска фильмов
     }
   }
 
+  // Эффект для восстановления значения поля ввода при возврате на страницу поиска
   useEffect(() => {
     if (location.pathname === '/movies' && localStorage.getItem('movieSearch')) {
       const localQuery = localStorage.getItem('movieSearch');
       setQuery(localQuery);
     }
   }, [location]);
+
+  // Эффект для фокусировки на поле ввода при монтировании компонента
+  useEffect(() => {
+    searchInputRef.current.focus();
+  }, []);
 
   return (
     <section className='search'>
@@ -40,8 +49,10 @@ function SearchForm({ onSearchMovies, onFilter, isShortMovies }) {
           type='text'
           placeholder='Фильм'
           onChange={handleChangeQuery}
-          value={query || ''}></input>
-
+          value={query || ''}
+          autoComplete='off' // Отключаем автозаполнение браузера
+          ref={searchInputRef} // Привязываем ref к полю ввода
+        />
         <button className='search__button' type='submit'></button>
       </form>
       <Checkbox onFilter={onFilter} isShortMovies={isShortMovies} />

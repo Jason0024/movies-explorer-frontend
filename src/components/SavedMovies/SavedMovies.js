@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './SavedMovies.css';
 import Header from '../Header/Header';
 import ArrowToTop from '../ArrowToTop/ArrowToTop';
@@ -9,31 +9,36 @@ import Footer from '../Footer/Footer';
 import { filterMoviesByTitle, filterMovieDuration } from '../../utils/utils';
 
 function SavedMovies({ loggedIn, savedMovies, handleDeleteClick }) {
-  const [filteredMovies, setFilteredMovies] = useState(savedMovies); //отфильтрованные по запросу и чекбоксу
-  const [isShortMovies, setIsShortMovies] = useState(false); //включен ли чекбокс короткометражек
-  const [isNotFound, setIsNotFound] = useState(false); //фильмы по запросу не найдены
+  // Состояния для хранения отфильтрованных фильмов, состояния чекбокса "короткометражки" и состояния отображения ошибки "Ничего не найдено"
+  const [filteredMovies, setFilteredMovies] = useState(savedMovies);
+  const [isShortMovies, setIsShortMovies] = useState(false);
+  const [isNotFound, setIsNotFound] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  //submit
-  function onSearchMovies(query) {
+  // Функция для обработки поиска фильмов
+  const onSearchMovies = useCallback((query) => {
     setSearchQuery(query);
-  }
+  }, []);
 
-  function handleShortMovies() {
-    setIsShortMovies(!isShortMovies);
-  }
+  // Функция для обработки чекбокса "короткометражки"
+  const handleShortMovies = useCallback(() => {
+    setIsShortMovies((prevIsShortMovies) => !prevIsShortMovies);
+  }, []);
 
+  // Эффект для фильтрации фильмов при изменении запроса или состояния чекбокса "короткометражки"
   useEffect(() => {
+    // Фильтруем фильмы по запросу
     const moviesList = filterMoviesByTitle(savedMovies, searchQuery);
-    setFilteredMovies(isShortMovies ? filterMovieDuration(moviesList) : moviesList);
+    // Если чекбокс "короткометражки" включен, фильтруем также по длительности
+    setFilteredMovies(
+      isShortMovies ? filterMovieDuration(moviesList) : moviesList
+    );
   }, [savedMovies, isShortMovies, searchQuery]);
 
+  // Эффект для проверки, есть ли фильмы по запросу
   useEffect(() => {
-    if (filteredMovies.length === 0) {
-      setIsNotFound(true);
-    } else {
-      setIsNotFound(false);
-    }
+    // Устанавливаем состояние, показывающее, найдены ли фильмы по запросу
+    setIsNotFound(!filteredMovies.length);
   }, [filteredMovies]);
 
   return (
