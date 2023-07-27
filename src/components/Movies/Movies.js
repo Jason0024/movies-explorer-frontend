@@ -112,7 +112,6 @@ function Movies({ loggedIn, handleElectClick, savedMovies, handleDeleteClick }) 
       <Footer />
     </main>
   );
-
 }
 
 export default Movies;

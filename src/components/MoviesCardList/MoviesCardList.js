@@ -4,7 +4,17 @@ import './MoviesCardList.css';
 import MoviesCard from '../MoviesCard/MoviesCard';
 import Preloader from '../Preloader/Preloader';
 import SearchError from '../SearchError/SearchError';
-import { SHOW_MORE_BUTTON_DECKTOP, SHOW_MORE_BUTTON_TABLET, SHOW_MORE_BUTTON_MOBILE } from '../../utils/constants';
+import {
+  SHOW_MORE_BUTTON_DECKTOP,
+  SHOW_MORE_BUTTON_TABLET,
+  SHOW_MORE_BUTTON_MOBILE,
+  MAX_SCREEN_SIZE_DESCTOP,
+  MAX_SCREEN_SIZE_TABLET,
+  MAX_SCREEN_SIZE_MOBILE,
+  MAX_MOVIES_COUNT_DESKTOP,
+  MAX_MOVIES_COUNT_TABLET,
+  MAX_MOVIES_COUNT_MOBILE
+} from '../../utils/constants';
 
 // Функция для поиска сохраненного фильма в списке сохраненных фильмов
 function getSavedMovieCard(savedMovies, card) {
@@ -19,9 +29,9 @@ function MoviesCardList({ cards, isSavedFilms, isLoading, isReqErr, isNotFound, 
   function shownCount() {
     const display = window.innerWidth;
     setShownMovies(
-      display > 1180 ? 16 :
-        display > 1023 ? 12 :
-          display > 800 ? 8 : 5
+      display > MAX_SCREEN_SIZE_DESCTOP ? MAX_MOVIES_COUNT_DESKTOP :
+        display > MAX_SCREEN_SIZE_TABLET ? MAX_MOVIES_COUNT_TABLET :
+          display > MAX_SCREEN_SIZE_MOBILE ? MAX_MOVIES_COUNT_TABLET : MAX_MOVIES_COUNT_MOBILE
     );
   }
 
@@ -39,12 +49,12 @@ function MoviesCardList({ cards, isSavedFilms, isLoading, isReqErr, isNotFound, 
   // Функция для показа дополнительных фильмов при клике на кнопку "Еще"
   function showMoreBtn() {
     const display = window.innerWidth;
-    if (display > 1180) {
+    if (display > MAX_SCREEN_SIZE_DESCTOP) {
       setShownMovies(shownMovies + SHOW_MORE_BUTTON_DECKTOP);
-    } else if (display > 1023) {
+    } else if (display > MAX_SCREEN_SIZE_TABLET) {
       setShownMovies(shownMovies + SHOW_MORE_BUTTON_TABLET);
     }
-    else if (display < 1023) {
+    else if (display < MAX_SCREEN_SIZE_TABLET) {
       setShownMovies(shownMovies + SHOW_MORE_BUTTON_MOBILE);
     }
   }
