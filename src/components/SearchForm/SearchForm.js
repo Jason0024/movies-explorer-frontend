@@ -7,7 +7,7 @@ function SearchForm({ onSearchMovies, onFilter, isShortMovies }) {
   const [isQueryError, setIsQueryError] = useState(false);
   const [query, setQuery] = useState('');
   const location = useLocation();
-  const searchInputRef = useRef(null); // Создаем ref для поля ввода
+  const searchInputRef = useRef(null);
 
   // Обработчик изменения значения в поле ввода
   function handleChangeQuery(e) {
@@ -21,7 +21,7 @@ function SearchForm({ onSearchMovies, onFilter, isShortMovies }) {
     if (query.trim().length === 0) {
       setIsQueryError(true); // Проверяем наличие запроса перед поиском
     } else {
-      onSearchMovies(query); // Вызываем функцию поиска фильмов
+      onSearchMovies(query, isShortMovies); // Вызываем функцию поиска фильмов и передаем значение isShortMovies
     }
   }
 
