@@ -6,6 +6,7 @@ import { useLocation } from 'react-router-dom';
 function SearchForm({ onSearchMovies, onFilter, isShortMovies }) {
   const [isQueryError, setIsQueryError] = useState(false);
   const [query, setQuery] = useState('');
+  const [movies, setMovies] = useState([]); // Состояние для хранения списка фильмов
   const location = useLocation();
   const searchInputRef = useRef(null);
 
@@ -21,7 +22,14 @@ function SearchForm({ onSearchMovies, onFilter, isShortMovies }) {
     if (query.trim().length === 0) {
       setIsQueryError(true); // Проверяем наличие запроса перед поиском
     } else {
-      onSearchMovies(query, isShortMovies); // Вызываем функцию поиска фильмов и передаем значение isShortMovies
+      onSearchMovies(query, isShortMovies)
+        .then((data) => {
+          setMovies(data); // Сохраняем список фильмов в состояние
+        })
+        .catch((error) => {
+          // Обработка ошибок при поиске фильмов
+          console.error('Error while searching movies:', error);
+        });
     }
   }
 
