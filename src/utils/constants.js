@@ -1,8 +1,8 @@
 const MAIN_URL = 'https://api.jason.diploma.nomoreparties.sbs';
 const BASE_URL = 'https://api.nomoreparties.co/beatfilm-movies';
 
-const EMAIL_PATTERN = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-const NAME_PATTERN = /^(?!^[\s-]*$)^[\sa-zA-Zа-яА-ЯЁё\-]+$/;
+const EMAIL_PATTERN = "[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+";
+const NAME_PATTERN = "^[a-zа-яА-ЯA-Z,.'-\s]+$";
 
 const MAX_SHORT_DURATION = 40;
 
