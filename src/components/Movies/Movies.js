@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './Movies.css';
 import Header from '../Header/Header';
 import ArrowToTop from '../ArrowToTop/ArrowToTop';
@@ -39,7 +39,7 @@ function Movies({ loggedIn, handleElectClick, savedMovies, handleDeleteClick }) 
   }
 
   // Обработчик для поиска фильмов
-  function onSearchMovies(query) {
+  const onSearchMovies = useCallback((query) => {
     const isShort = isShortMovies; // Получаем текущее состояние чекбокса "короткометражки"
 
     localStorage.setItem('movieSearch', query); // Сохраняем запрос в локальное хранилище
@@ -67,7 +67,7 @@ function Movies({ loggedIn, handleElectClick, savedMovies, handleDeleteClick }) 
           setIsLoading(false); // В любом случае снимаем состояние загрузки
         });
     }
-  }
+  }, [isShortMovies]);
 
   // Эффект для установки состояния чекбокса "короткометражки" из локального хранилища
   useEffect(() => {

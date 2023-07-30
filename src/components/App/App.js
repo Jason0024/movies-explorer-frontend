@@ -233,8 +233,8 @@ function App() {
               component={Profile}
               isLoading={isLoading}></ProtectedRoute>
 
-            <Route path='/*'>
-              <NotFound />
+            <Route path="/">
+              <NotFound history={history} />
             </Route>
           </Switch>
           <UnsuccessPopup isSuccess={isSuccess} onClose={closeUnsuccessPopup} />

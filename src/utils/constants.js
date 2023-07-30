@@ -1,9 +1,9 @@
 const MAIN_URL = 'https://api.jason.diploma.nomoreparties.sbs';
 const BASE_URL = 'https://api.nomoreparties.co/beatfilm-movies';
-
+// eslint-disable-next-line
 const EMAIL_PATTERN = "[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+";
 const NAME_PATTERN = "^[a-zA-Zа-яА-ЯЁё,.'\\-\\s]+$";
-
+const TOP_LEVEL_DOMAIN_PATTERN = /\.(com|org|net|ru|info|uk|edu)$/i;
 
 const MAX_SHORT_DURATION = 40;
 
@@ -32,6 +32,7 @@ export {
   BASE_URL,
   EMAIL_PATTERN,
   NAME_PATTERN,
+  TOP_LEVEL_DOMAIN_PATTERN,
   SHOW_MORE_BUTTON_DECKTOP,
   SHOW_MORE_BUTTON_TABLET,
   SHOW_MORE_BUTTON_MOBILE,

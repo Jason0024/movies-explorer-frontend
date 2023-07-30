@@ -6,7 +6,10 @@ import useFormValidation from '../../../hooks/useFormValidation';
 import { EMAIL_PATTERN } from '../../../utils/constants';
 
 function Login({ onAuthorize, isLoading }) {
-  const { newValues, errors, handleFormChange, isFormValid } = useFormValidation();
+  const { newValues, errors, handleFormChange, isFormValid } = useFormValidation({
+    email: '',
+    password: '',
+  });
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -15,6 +18,9 @@ function Login({ onAuthorize, isLoading }) {
       password: newValues.password,
     });
   }
+
+  // Добавим дополнительную проверку на наличие домена первого уровня в адресе электронной почты
+  const isEmailValid = errors.email === '' && newValues.email.includes('.');
 
   return (
     <div className='form__wrapper'>
@@ -52,9 +58,9 @@ function Login({ onAuthorize, isLoading }) {
         </label>
         <button
           type='submit'
-          disabled={!isFormValid || isLoading}
+          disabled={!isFormValid || isLoading || !isEmailValid} // Добавим проверку на isEmailValid
           className={
-            !isFormValid || isLoading
+            !isFormValid || isLoading || !isEmailValid
               ? 'form__button-save form__button-save_inactive'
               : 'form__button-save'
           }>

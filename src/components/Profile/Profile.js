@@ -3,13 +3,14 @@ import CurrentUserContext from '../../contexts/CurrentUserContext';
 import './Profile.css';
 import Header from '../Header/Header';
 import useFormValidation from '../../hooks/useFormValidation';
-import { EMAIL_PATTERN, NAME_PATTERN } from '../../utils/constants';
+import { EMAIL_PATTERN, NAME_PATTERN, TOP_LEVEL_DOMAIN_PATTERN } from '../../utils/constants';
 
-function Profile({ signOut, onUpdateUser, loggedIn, isLoading }) {
+function Profile({ signOut, onUpdateUser, loggedIn }) {
   const currentUser = useContext(CurrentUserContext);
 
   const { newValues, errors, handleFormChange, isFormValid, resetForm } = useFormValidation();
   const [isLastValues, setIsLastValues] = useState(false);
+  const [isEmailValid, setIsEmailValid] = useState(true);
 
   useEffect(() => {
     if (currentUser) {
@@ -26,13 +27,18 @@ function Profile({ signOut, onUpdateUser, loggedIn, isLoading }) {
   }
 
   useEffect(() => {
-    if (currentUser.name === newValues.name && currentUser.email === newValues.email) {
+    if (currentUser.name === newValues.name) {
       setIsLastValues(true);
     } else {
       setIsLastValues(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newValues]);
+  }, [currentUser.name, newValues.name]);
+
+  useEffect(() => {
+    // Проверяем, проходит ли email валидацию и есть ли домен верхнего уровня в email
+    const isEmailValid = errors.email === '' && TOP_LEVEL_DOMAIN_PATTERN.test(newValues.email);
+    setIsEmailValid(isEmailValid);
+  }, [errors.email, newValues.email]);
 
   return (
     <>
@@ -74,14 +80,16 @@ function Profile({ signOut, onUpdateUser, loggedIn, isLoading }) {
           </label>
           <button
             type='submit'
-            disabled={!isFormValid ? true : false}
+            disabled={!isFormValid || (isLastValues && !isEmailValid)}
             className={
-              !isFormValid || isLoading || isLastValues
+              !isFormValid || (isLastValues && !isEmailValid)
                 ? 'profile__button-save form__button-save_inactive'
                 : 'profile__button-save'
-            }>
+            }
+          >
             Редактировать
           </button>
+
           <button type='button' className='profile__logout' onClick={signOut}>
             Выйти из аккаунта
           </button>

@@ -14,8 +14,15 @@ function Register({ onRegister, isLoading }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    onRegister(newValues);
+
+    // Добавим проверку на валидность адреса электронной почты перед вызовом onRegister
+    if (isFormValid) {
+      onRegister(newValues);
+    }
   }
+
+  // Добавим дополнительную проверку на наличие домена первого уровня в адресе электронной почты
+  const isEmailValid = errors.email === '' && newValues.email.includes('.');
 
   return (
     <div className='form__wrapper'>
@@ -66,9 +73,9 @@ function Register({ onRegister, isLoading }) {
         </label>
         <button
           type='submit'
-          disabled={!isFormValid || isLoading}
+          disabled={!isFormValid || isLoading || !isEmailValid} // Добавим проверку на isEmailValid
           className={
-            !isFormValid || isLoading
+            !isFormValid || isLoading || !isEmailValid
               ? 'form__button-save form__button-save_inactive'
               : 'form__button-save'
           }

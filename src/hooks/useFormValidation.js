@@ -17,11 +17,14 @@ const useFormValidation = () => {
   };
 
   // Функция для сброса состояний формы в исходное состояние с возможностью передать новые значения
-  const resetForm = useCallback(() => {
-    setNewValues({});
-    setErrors({});
-    setIsFormValid(false);
-  }, []);
+  const resetForm = useCallback(
+    (updValues = {}, updErrors = {}, updIsValid = false) => {
+      setNewValues(updValues);
+      setErrors(updErrors);
+      setIsFormValid(updIsValid);
+    },
+    [setNewValues, setErrors, setIsFormValid]
+  );
 
   // Возвращаем состояния и функции для использования в компонентах
   return {

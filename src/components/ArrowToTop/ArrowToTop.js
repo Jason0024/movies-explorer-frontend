@@ -26,13 +26,11 @@ function ArrowToTop() {
   }, []);
 
   return (
-    <>
-      <div className={`scroll ${isVisible ? 'visible' : ''}`}>
-        <Link to='header' smooth={true} duration={600}>
-          <img src={arrowIco} alt='Скролл вверх' className='scroll__image' />
-        </Link>
-      </div>
-    </>
+    <div className={`scroll ${isVisible ? 'visible' : ''}`}>
+      <Link to='header' smooth={true} duration={600}>
+        <img src={arrowIco} alt='Скролл вверх' className='scroll__image' />
+      </Link>
+    </div>
   );
 }
 
