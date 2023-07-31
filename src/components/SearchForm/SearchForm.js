@@ -4,11 +4,15 @@ import Checkbox from '../Checkbox/Checkbox';
 import { useLocation } from 'react-router-dom';
 
 function SearchForm({ onSearchMovies, onFilter, isShortMovies }) {
+  // Загружаем сохраненные данные из локального хранилища при монтировании компонента
+  const savedQuery = localStorage.getItem('searchQuery') || '';
+  const savedIsShortMovies = localStorage.getItem('isShortMovies') === 'true';
+
   const [isQueryError, setIsQueryError] = useState(false);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(savedQuery);
   const [isInitialSearchComplete, setIsInitialSearchComplete] = useState(false);
-  const [isCheckboxActive, setIsCheckboxActive] = useState(false);
-  const [movies, setMovies] = useState([]); // Добавлено состояние для хранения списка фильмов
+  const [isCheckboxActive, setIsCheckboxActive] = useState(savedIsShortMovies);
+  const movies = useState([]);
   const location = useLocation();
   const isFilterAppliedRef = useRef(false);
 
@@ -26,24 +30,35 @@ function SearchForm({ onSearchMovies, onFilter, isShortMovies }) {
     if (query.trim().length === 0) {
       setIsQueryError(true); // Проверяем наличие запроса перед поиском
     } else {
-      // Вызываем функцию onSearchMovies с текущим запросом
       onSearchMovies(query);
     }
   }
 
   // Обработчик изменения значения чекбокса
   const handleFilterChange = (isChecked) => {
+    setIsCheckboxActive(isChecked);
     // Вызываем функцию onFilter с текущим состоянием чекбокса
     onFilter(isChecked);
-    setIsCheckboxActive(true);
   };
 
-  // Эффект для применения фильтра, когда компонент уже отрендерен
+  // Сохраняем данные в локальное хранилище при изменении поискового запроса или состояния переключателя короткометражек
   useEffect(() => {
+    localStorage.setItem('searchQuery', query);
+  }, [query]);
+
+  useEffect(() => {
+    localStorage.setItem('isShortMovies', isCheckboxActive.toString());
+  }, [isCheckboxActive]);
+
+  useEffect(() => {
+    // Запускаем поиск фильмов с текущим запросом и фильтром (isShortMovies)
+    onSearchMovies(query);
+  }, [query, isShortMovies, onSearchMovies]);
+
+  useEffect(() => {
+    // Применяем фильтр короткометражек, если он уже был применен ранее
     if (isInitialSearchComplete && location.pathname === '/movies') {
-      // Проверяем, был ли уже применен фильтр
       if (!isFilterAppliedRef.current) {
-        // Применяем фильтр, передав текущее значение isShortMovies
         onFilter(isShortMovies);
         isFilterAppliedRef.current = true;
       }
@@ -51,14 +66,6 @@ function SearchForm({ onSearchMovies, onFilter, isShortMovies }) {
       isFilterAppliedRef.current = false;
     }
   }, [isInitialSearchComplete, location, onFilter, isShortMovies]);
-
-  // Эффект для обновления списка фильмов при изменении значения query или isShortMovies
-  useEffect(() => {
-    // Очищаем список фильмов перед обновлением
-    setMovies([]);
-    // Запускаем поиск фильмов с текущим запросом и фильтром (isShortMovies)
-    onSearchMovies(query);
-  }, [query, isShortMovies, onSearchMovies]); // Добавлен 'onSearchMovies' в массив зависимостей
 
   return (
     <section className="search">
