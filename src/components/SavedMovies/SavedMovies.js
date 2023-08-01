@@ -37,8 +37,11 @@ function SavedMovies({ loggedIn, savedMovies, handleDeleteClick }) {
 
   // Эффект для проверки, есть ли фильмы по запросу
   useEffect(() => {
-    // Устанавливаем состояние, показывающее, найдены ли фильмы по запросу
-    setIsNotFound(!filteredMovies.length);
+    if (filteredMovies.length === 0) {
+      setIsNotFound(true);
+    } else {
+      setIsNotFound(false);
+    }
   }, [filteredMovies]);
 
   return (

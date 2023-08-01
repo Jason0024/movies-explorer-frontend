@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Movies.css';
 import Header from '../Header/Header';
 import ArrowToTop from '../ArrowToTop/ArrowToTop';
@@ -9,6 +9,7 @@ import { filterMoviesByTitle, filterMovieDuration } from '../../utils/utils';
 import { getCards } from '../../utils/MoviesApi';
 
 function Movies({ loggedIn, handleElectClick, savedMovies, handleDeleteClick }) {
+  // Состояния компонента
   const [isLoading, setIsLoading] = useState(false); // Загрузка прелоадера
   const [initialMovies, setInitialMovies] = useState([]); // Отфильтрованные фильмы по запросу
   const [filteredMovies, setFilteredMovies] = useState([]); // Отфильтрованные фильмы по запросу и чекбоксу
@@ -16,78 +17,88 @@ function Movies({ loggedIn, handleElectClick, savedMovies, handleDeleteClick }) 
   const [isReqErr, setIsReqErr] = useState(false); // Ошибка запроса к серверу
   const [isNotFound, setIsNotFound] = useState(false); // Фильмы по запросу не найдены
 
-  // Функция для фильтрации фильмов
-  function handleFilterMovies(movies, query, isShort) {
-    const filteredMovies = filterMoviesByTitle(movies, query, isShort); // Фильтруем полученный массив по запросу и чекбоксу "короткометражки"
-    const filteredAndSortedMovies = isShort ? filterMovieDuration(filteredMovies) : filteredMovies; // Фильтруем по длительности, если чекбокс "короткометражки" включен
+  // Обработчик для поиска фильмов
+  function onSearchMovies(query, isShortMovies) {
+    localStorage.setItem('movieSearch', query);
+    localStorage.setItem('shortMovies', isShortMovies);
 
-    setFilteredMovies(filteredAndSortedMovies); // Обновляем список отфильтрованных фильмов в состоянии
-    localStorage.setItem('movies', JSON.stringify(filteredAndSortedMovies)); // Сохраняем отфильтрованные фильмы в локальное хранилище
-    localStorage.setItem('allMovies', JSON.stringify(movies)); // Сохраняем все фильмы в локальное хранилище
+    if (localStorage.getItem('allMovies')) {
+      const movies = JSON.parse(localStorage.getItem('allMovies'));
+      handleFilterMovies(movies, query, isShortMovies);
+    } else {
+      setIsLoading(true);
+      getCards()
+        .then((cardsData) => {
+          handleFilterMovies(cardsData, query, isShortMovies);
+          setIsReqErr(false);
+        })
+        .catch((err) => {
+          setIsReqErr(true);
+          console.log(err);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }
+
+  // Функция для фильтрации фильмов
+  function handleFilterMovies(movies, query, short) {
+    const moviesList = filterMoviesByTitle(movies, query, short); // Фильтруем полученный массив по запросу
+    setInitialMovies(moviesList); // Записываем в стейт
+    setFilteredMovies(short ? filterMovieDuration(moviesList) : moviesList); // Если чекбокс тру, то фильтруем по длине и записываем в стейт
+    localStorage.setItem('movies', JSON.stringify(moviesList));
+    localStorage.setItem('allMovies', JSON.stringify(movies));
   }
 
   // Обработчик для чекбокса "короткометражки"
   function handleShortMovies() {
-    const isShort = !isShortMovies; // Переключаем значение чекбокса
-
-    // Фильтруем фильмы по длительности на основе переключенного значения чекбокса
-    const filteredAndSortedMovies = isShort ? filterMovieDuration(initialMovies) : initialMovies;
-    setFilteredMovies(filteredAndSortedMovies); // Обновляем список отфильтрованных фильмов в состоянии
-
-    setIsShortMovies(isShort); // Устанавливаем новое состояние чекбокса
-    localStorage.setItem('shortMovies', JSON.stringify(isShort)); // Сохраняем состояние чекбокса в локальное хранилище
-  }
-
-  // Обработчик для поиска фильмов
-  const onSearchMovies = useCallback((query) => {
-    const isShort = isShortMovies; // Получаем текущее состояние чекбокса "короткометражки"
-
-    localStorage.setItem('movieSearch', query); // Сохраняем запрос в локальное хранилище
-    localStorage.setItem('shortMovies', JSON.stringify(isShort)); // Сохраняем состояние чекбокса в локальное хранилище
-
-    // Получаем список всех фильмов из локального хранилища
-    const allMovies = JSON.parse(localStorage.getItem('allMovies'));
-
-    if (allMovies) {
-      // Если уже есть все фильмы в локальном хранилище, используем их для фильтрации
-      handleFilterMovies(allMovies, query, isShort);
+    setIsShortMovies(!isShortMovies);
+    if (!isShortMovies) {
+      if (filterMovieDuration(initialMovies).length === 0) {
+        setFilteredMovies(filterMovieDuration(initialMovies));
+      } else {
+        setFilteredMovies(filterMovieDuration(initialMovies));
+      }
     } else {
-      // Если фильмов в локальном хранилище нет, делаем запрос на сервер
-      setIsLoading(true); // Устанавливаем состояние загрузки
-      getCards()
-        .then((cardsData) => {
-          handleFilterMovies(cardsData, query, isShort); // Фильтруем полученные фильмы
-          setIsReqErr(false); // Сбрасываем состояние ошибки запроса
-        })
-        .catch((err) => {
-          setIsReqErr(true); // Устанавливаем состояние ошибки запроса в случае ошибки
-          console.log(err);
-        })
-        .finally(() => {
-          setIsLoading(false); // В любом случае снимаем состояние загрузки
-        });
+      setFilteredMovies(initialMovies);
     }
-  }, [isShortMovies]);
+    localStorage.setItem('shortMovies', !isShortMovies);
+  }
 
   // Эффект для установки состояния чекбокса "короткометражки" из локального хранилища
   useEffect(() => {
-    const isShort = localStorage.getItem('shortMovies') === 'true';
-    setIsShortMovies(isShort);
+    if (localStorage.getItem('shortMovies') === 'true') {
+      setIsShortMovies(true);
+    } else {
+      setIsShortMovies(false);
+    }
   }, []);
 
   // Эффект для установки списка фильмов из локального хранилища
   useEffect(() => {
-    const movies = JSON.parse(localStorage.getItem('movies'));
-    if (movies) {
+    if (localStorage.getItem('movies')) {
+      const movies = JSON.parse(localStorage.getItem('movies'));
       setInitialMovies(movies);
-      setFilteredMovies(localStorage.getItem('shortMovies') === 'true' ? filterMovieDuration(movies) : movies);
+      if (localStorage.getItem('shortMovies') === 'true') {
+        setFilteredMovies(filterMovieDuration(movies));
+      } else {
+        setFilteredMovies(movies);
+      }
     }
   }, []);
 
   // Эффект для определения, есть ли фильмы по запросу
   useEffect(() => {
-    const isMoviesNotFound = filteredMovies.length === 0 && localStorage.getItem('movieSearch');
-    setIsNotFound(isMoviesNotFound);
+    if (localStorage.getItem('movieSearch')) {
+      if (filteredMovies.length === 0) {
+        setIsNotFound(true);
+      } else {
+        setIsNotFound(false);
+      }
+    } else {
+      setIsNotFound(false);
+    }
   }, [filteredMovies]);
 
   return (
