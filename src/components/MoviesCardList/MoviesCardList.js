@@ -4,8 +4,19 @@ import './MoviesCardList.css';
 import MoviesCard from '../MoviesCard/MoviesCard';
 import Preloader from '../Preloader/Preloader';
 import SearchError from '../SearchError/SearchError';
-import { SHOW_MORE_BUTTON_DECKTOP, SHOW_MORE_BUTTON_TABLET, SHOW_MORE_BUTTON_MOBILE } from '../../utils/constants';
+import {
+  SHOW_MORE_BUTTON_DECKTOP,
+  SHOW_MORE_BUTTON_TABLET,
+  SHOW_MORE_BUTTON_MOBILE,
+  MAX_SCREEN_SIZE_DESCTOP,
+  MAX_SCREEN_SIZE_TABLET,
+  MAX_SCREEN_SIZE_MOBILE,
+  MAX_MOVIES_COUNT_DESKTOP,
+  MAX_MOVIES_COUNT_TABLET,
+  MAX_MOVIES_COUNT_MOBILE
+} from '../../utils/constants';
 
+// Функция для поиска сохраненного фильма в списке сохраненных фильмов
 function getSavedMovieCard(savedMovies, card) {
   return savedMovies.find((savedMovie) => savedMovie.movieId === card.id);
 }
@@ -14,38 +25,41 @@ function MoviesCardList({ cards, isSavedFilms, isLoading, isReqErr, isNotFound, 
   const [shownMovies, setShownMovies] = useState(0);
   const { pathname } = useLocation();
 
+  // Функция для определения количества показываемых фильмов в зависимости от ширины экрана
   function shownCount() {
     const display = window.innerWidth;
     setShownMovies(
-      display > 1180 ? 16 :
-        display > 1023 ? 12 :
-          display > 800 ? 8 : 5
+      display > MAX_SCREEN_SIZE_DESCTOP ? MAX_MOVIES_COUNT_DESKTOP :
+        display > MAX_SCREEN_SIZE_TABLET ? MAX_MOVIES_COUNT_TABLET :
+          display > MAX_SCREEN_SIZE_MOBILE ? MAX_MOVIES_COUNT_TABLET : MAX_MOVIES_COUNT_MOBILE
     );
   }
 
+  // Запускаем функцию shownCount() при первой отрисовке компонента
   useEffect(() => {
     shownCount();
+    // Добавляем слушатель на изменение размера окна для обновления количества показываемых фильмов
+    window.addEventListener('resize', shownCount);
+    // Возвращаем функцию для удаления слушателя при размонтировании компонента
+    return () => {
+      window.removeEventListener('resize', shownCount);
+    };
   }, []);
 
-  useEffect(() => {
-    setTimeout(() => {
-      window.addEventListener('resize', shownCount);
-    }, 500);
-  });
-
-
+  // Функция для показа дополнительных фильмов при клике на кнопку "Еще"
   function showMoreBtn() {
     const display = window.innerWidth;
-    if (display > 1180) {
+    if (display > MAX_SCREEN_SIZE_DESCTOP) {
       setShownMovies(shownMovies + SHOW_MORE_BUTTON_DECKTOP);
-    } else if (display > 1023) {
+    } else if (display > MAX_SCREEN_SIZE_TABLET) {
       setShownMovies(shownMovies + SHOW_MORE_BUTTON_TABLET);
     }
-    else if (display < 1023) {
+    else if (display < MAX_SCREEN_SIZE_TABLET) {
       setShownMovies(shownMovies + SHOW_MORE_BUTTON_MOBILE);
     }
   }
 
+  // Создаем массив компонентов фильмов
   const movieCards = cards.map((card) => (
     <MoviesCard
       key={isSavedFilms ? card._id : card.id}
@@ -59,41 +73,33 @@ function MoviesCardList({ cards, isSavedFilms, isLoading, isReqErr, isNotFound, 
     />
   ));
 
+  // Получаем только показываемые фильмы
   const shownMovieCards = movieCards.slice(0, shownMovies);
 
   return (
     <section className='cards'>
-      {isLoading && <Preloader />}
-      {isNotFound && !isLoading && <SearchError errorText={'Ничего не найдено'} />}
+      {isLoading && <Preloader />} {/* Показываем прелоадер, если данные загружаются */}
+      {isNotFound && !isLoading && <SearchError errorText={'Ничего не найдено'} />} {/* Показываем сообщение "Ничего не найдено", если результат поиска пуст */}
       {isReqErr && !isLoading && (
         <SearchError
           errorText={
             'Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз'
           }
         />
-      )}
+      )} {/* Показываем сообщение об ошибке, если запрос не удался */}
       {!isLoading && !isReqErr && !isNotFound && (
         <>
-          {pathname === '/saved-movies' ? (
-            <>
-              <ul className='cards__list'>
-                {movieCards}
-              </ul>
-              <div className='cards__button-container'></div>
-            </>
-          ) : (
-            <>
-              <ul className='cards__list'>
-                {shownMovieCards}
-              </ul>
-              <div className='cards__button-container'>
-                {cards.length > shownMovies && (
-                  <button className='cards__button' onClick={showMoreBtn}>
-                    Ещё
-                  </button>
-                )}
-              </div>
-            </>
+          {movieCards.length > 0 && (
+            <ul className='cards__list'>
+              {pathname === '/saved-movies' ? movieCards : shownMovieCards} {/* Рендерим список фильмов */}
+            </ul>
+          )}
+          {cards.length > shownMovies && (
+            <div className='cards__button-container'>
+              <button className='cards__button' onClick={showMoreBtn}> {/* Кнопка "Еще" для показа дополнительных фильмов */}
+                Ещё
+              </button>
+            </div>
           )}
         </>
       )}

@@ -7,37 +7,23 @@ const useFormValidation = () => {
   const [isFormValid, setIsFormValid] = useState(false);
 
   // Функция для обработки изменений в полях формы
-  const handleFormChange = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-
-    // Обновляем состояние newValues, добавляя новое значение в соответствии с именем поля
-    setNewValues({
-      ...newValues,
-      [name]: value,
-    });
-
-    // Проверяем валидность поля
-    const isFormValid = event.target.checkValidity();
-
-    // Обновляем состояние errors, добавляя сообщение об ошибке, если поле невалидно
-    setErrors({
-      ...errors,
-      [name]: isFormValid ? '' : event.target.validationMessage,
-    });
-
-    // Проверяем валидность всей формы и обновляем соответствующее состояние isFormValid
-    setIsFormValid(isFormValid);
+  const handleFormChange = (evt) => {
+    const target = evt.target;
+    const name = target.name;
+    const value = target.value;
+    setNewValues({ ...newValues, [name]: value });
+    setErrors({ ...errors, [name]: target.validationMessage });
+    setIsFormValid(evt.target.closest('form').checkValidity());
   };
 
   // Функция для сброса состояний формы в исходное состояние с возможностью передать новые значения
   const resetForm = useCallback(
-    (newValues = {}, newErrors = {}, newIsFormValid = false) => {
-      setNewValues(newValues);
-      setErrors(newErrors);
-      setIsFormValid(newIsFormValid);
+    (updValues = {}, updErrors = {}, updIsValid = false) => {
+      setNewValues(updValues);
+      setErrors(updErrors);
+      setIsFormValid(updIsValid);
     },
-    [setNewValues, setErrors, setIsFormValid],
+    [setNewValues, setErrors, setIsFormValid]
   );
 
   // Возвращаем состояния и функции для использования в компонентах

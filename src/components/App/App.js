@@ -170,7 +170,7 @@ function App() {
     localStorage.removeItem('movieSearch'); // Удаляем результаты поиска фильмов из локального хранилища (если есть такие данные)
     localStorage.removeItem('shortMovies'); // Удаляем сохраненные короткометражные фильмы из локального хранилища (если есть такие данные)
     localStorage.removeItem('allMovies'); // Удаляем все фильмы из локального хранилища (если есть такие данные)
-    history.push('/'); // Перенаправляем пользователя на главную страницу (проверьте, что переменная "history" определена ранее в коде)
+    history.push('/'); // Перенаправляем пользователя на главную страницу
   }
 
   // Функция для закрытия всплывающего окна с сообщением об ошибке (неудачной операции)
@@ -233,8 +233,8 @@ function App() {
               component={Profile}
               isLoading={isLoading}></ProtectedRoute>
 
-            <Route path='/*'>
-              <NotFound />
+            <Route path="/">
+              <NotFound history={history} />
             </Route>
           </Switch>
           <UnsuccessPopup isSuccess={isSuccess} onClose={closeUnsuccessPopup} />

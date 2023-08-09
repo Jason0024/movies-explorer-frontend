@@ -1,6 +1,6 @@
+import { MAX_SHORT_DURATION } from './constants';
+
 function filterMovieDuration(movies) {
-  // Максимальная длительность короткометражных фильмов в минутах.
-  const MAX_SHORT_DURATION = 40;
   // Используем метод filter для отбора фильмов с длительностью меньше значения MAX_SHORT_DURATION.
   const shortMovies = movies.filter((movie) => movie.duration < MAX_SHORT_DURATION);
   // Возвращаем новый массив shortMovies, содержащий только короткометражные фильмы.
